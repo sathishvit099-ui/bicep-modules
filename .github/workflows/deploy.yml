@@ -1,0 +1,55 @@
+name: Deploy Azure Bicep
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy Bicep Infrastructure
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Checkout GitHub repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Login to Azure using OIDC
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3. Verify Azure login
+      - name: Verify Azure Account
+        run: |
+          az account show
+
+      # 4. Validate Bicep
+      - name: Validate Bicep
+        working-directory: bicep-demo
+        run: |
+          az deployment sub validate \
+            --location centralus \
+            --template-file main.bicep \
+            --parameters @main.parameters.json
+
+      # 5. Deploy Bicep
+      - name: Deploy Azure Infrastructure
+        working-directory: bicep-demo
+        run: |
+          az deployment sub create \
+            --location centralus \
+            --template-file main.bicep \
+            --parameters @main.parameters.json
+
+      # 6. Show deployment result
+      - name: Deployment Result
+        run: |
+          echo "Azure Bicep deployment completed."
