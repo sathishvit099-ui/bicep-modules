@@ -1,0 +1,94 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "resourceGroupName": {
+      "value": "rg-demo-centralus"
+    },
+    "location": {
+      "value": "centralus"
+    },
+    "tags": {
+      "value": {
+        "Environment": "Dev",
+        "Project": "Demo"
+      }
+    },
+
+    "vnetName": {
+      "value": "demo-vnet"
+    },
+
+    "addressSpace": {
+      "value": "10.0.0.0/16"
+    },
+
+    "webSubnet": {
+      "value": "public-subnet"
+    },
+
+    "appSubnet": {
+      "value": "app-subnet"
+    },
+
+    "dbSubnet": {
+      "value": "db-subnet"
+    },
+
+    "webPrefix": {
+      "value": "10.0.1.0/24"
+    },
+
+    "appPrefix": {
+      "value": "10.0.2.0/24"
+    },
+
+    "dbPrefix": {
+      "value": "10.0.3.0/24"
+    },
+
+    "bastionSubnetName": {
+      "value": "AzureBastionSubnet"
+    },
+
+    "bastionSubnetPrefix": {
+      "value": "10.0.10.0/26"
+    },
+
+    "nsgName": {
+      "value": "demo-nsg"
+    },
+
+    "routeTableName": {
+      "value": "public-rt"
+    },
+
+    "publicIpName": {
+      "value": "nat-pip"
+    },
+
+    "natGatewayName": {
+      "value": "demo-nat"
+    },
+
+    "bastionName": {
+      "value": "demo-bastion"
+    },
+
+    "bastionPublicIpName": {
+      "value": "demo-bastion-pip"
+    },
+
+    "vmName": {
+      "value": "app-vm01"
+    },
+
+    "adminUsername": {
+      "value": "azureuser"
+    },
+
+    "adminPassword": {
+      "value": "Password@123456"
+    }
+  }
+}
