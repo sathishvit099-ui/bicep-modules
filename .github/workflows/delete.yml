@@ -1,0 +1,78 @@
+name: Delete Azure Infrastructure
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  delete:
+    name: Delete Azure Resource Group
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Login to Azure using OIDC
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # 3. Verify Azure Login
+      - name: Verify Azure Account
+        run: |
+          az account show
+
+      # 4. Check Resource Group
+      - name: Check Resource Group
+        run: |
+          echo "Checking resource group..."
+
+          az group show \
+            --name rg-demo-centralus \
+            --output table
+
+      # 5. Delete Resource Group
+      - name: Delete Resource Group
+        run: |
+          echo "Deleting rg-demo-centralus..."
+
+          az group delete \
+            --name rg-demo-centralus \
+            --yes \
+            --no-wait
+
+          echo "Resource group deletion started."
+
+      # 6. Wait for deletion
+      - name: Wait for Resource Group Deletion
+        run: |
+          echo "Waiting for resource group deletion..."
+
+          while az group exists --name rg-demo-centralus | grep -q true
+          do
+            echo "Resource group still exists..."
+            sleep 20
+          done
+
+          echo "Resource group deleted successfully."
+
+      # 7. Verify
+      - name: Verify Deletion
+        run: |
+          if az group exists --name rg-demo-centralus | grep -q false; then
+            echo "======================================"
+            echo "Resource Group successfully deleted."
+            echo "======================================"
+          else
+            echo "Resource Group still exists."
+            exit 1
+          fi
